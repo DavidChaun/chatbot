@@ -1,0 +1,45 @@
+python-dotenv==1.0.0
+python-multipart==0.0.7
+pydantic==2.7.0
+exceptiongroup==1.1.3
+black[d]==24.3.0
+
+# for unit test
+pytest==7.4.0
+pytest-xdist==3.3.1
+pytest-rerunfailures==12.0
+
+# web
+fastapi==0.109.2
+uvicorn==0.24.0.post1
+starlette~=0.36.3
+
+# http client
+tenacity==8.2.3
+httpx==0.25.2
+openai==1.47.1
+
+# database & vector
+psycopg2-binary==2.9.9
+pgvector==0.2.5
+SQLAlchemy==2.0.28
+
+
+# s3
+boto3==1.26.113
+botocore==1.29.113
+
+# log output
+coloredlogs==15.0.1
+concurrent-log-handler==0.9.24
+
+# langchain
+langchain==0.2.0
+
+# utils
+shortuuid==1.0.11
+pytz
+pillow
+beautifulsoup4
+
+duckduckgo_search
