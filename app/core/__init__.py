@@ -2,8 +2,12 @@ from typing import Dict, List, Any
 from collections import defaultdict
 import time
 from threading import Thread, Lock
+from concurrent.futures import ThreadPoolExecutor, Future
 
 from app.utils import current_timestamp
+
+
+executor = ThreadPoolExecutor(max_workers=5)
 
 
 class TimedList:
@@ -43,10 +47,14 @@ class MessageReceiveQueue:
 
         while True:
             with self.lock:
+                futures = []
                 for session_id, tls_ in self.session_id_to_msgs.items():
                     msgs = tls_.clear()
                     if len(msgs) > 0:
+                        # futures.append(executor.submit(chat, msgs))
                         chat(msgs)
+                # for f in futures:
+                #     f.result()
             time.sleep(0.1)
 
 
@@ -68,7 +76,7 @@ class MessageReplyQueue:
                     if len(msg_ids) > 0:
                         msg_id = msg_ids.pop()
                         reply(msg_id)
-            time.sleep(0.25)
+            time.sleep(0.1)
 
 
 message_receive_queue = MessageReceiveQueue()

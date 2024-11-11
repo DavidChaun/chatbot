@@ -1,4 +1,4 @@
-FROM dockerpull.com/library/python:3.10.13
+FROM python:3.10-slim
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE en_US:en

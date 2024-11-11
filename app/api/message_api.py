@@ -97,7 +97,7 @@ def receive_msg(
         )
         save_entity(msg_extra)
 
-    message_receive_queue.send(session_id, messaged.id, delay={"pic": 15}.get(type_, 5))
+    message_receive_queue.send(session_id, messaged.id, delay={"pic": 15}.get(type_, 3))
 
 
 def _decorate_message(

@@ -28,6 +28,11 @@ with open(
     histories_compress_prompt = file.read()
 
 with open(
+    file_relative_path(__file__, "../prompts/question_rewrite_prompt.txt"), "r"
+) as file:
+    question_rewrite_prompt = file.read()
+
+with open(
     file_relative_path(__file__, "../prompts/net_search_prompt.txt"), "r"
 ) as file:
     net_search_prompt = file.read()
@@ -112,15 +117,18 @@ def chat(message_ids: List[str]):
     if is_text_type:
         question = "\n".join([m.content for m in messages])
         # 结合历史问题重写
-        is_net_search = ai_consider(net_search_prompt.format(histories=histories_content, content=question))
+        question_rewrite = ai_consider(question_rewrite_prompt.format(histories=histories_content, content=question))
+        logger.info(f"【{messages[0].from_}】question rewrite：{question}")
+
+        is_net_search = ai_consider(net_search_prompt.format(content=question_rewrite))
         logger.info(f"【{messages[0].from_}】：{question}")
         logger.info(f"【{messages[0].from_}】问题是否搜索：{is_net_search}")
 
         if is_net_search == "是":
-            # keywords = ai_consider(keyword_prompt.format(content=question))
-            # logger.info(f"【{messages[0].from_}】问题关键词：{keywords}")
+            intent, search_contexts, links = web_search_pro(question)
+            logger.info(f"【{messages[0].from_}】搜索意图：{intent}")
+            # todo 保存一下相关意图和问题，方便调整
 
-            search_contexts, links = web_search_pro(question)
             # 发一个过去让客户知道关联的链接
             link_content = '\n'.join(links[0:2])
             _build_and_send_reply_msg(f"挑了些链接。\n{link_content}", messages[0].to, messages[0].from_, session_id)
@@ -129,7 +137,7 @@ def chat(message_ids: List[str]):
                 LlmMessage(
                     role=USER_ROLE,
                     content=net_search_context_prompt.format(
-                        net_content="\n".join(search_contexts[0:10]), question=question
+                        net_content="\n".join(search_contexts[0:10]), question=question_rewrite
                     ),
                 )
             )
@@ -144,6 +152,7 @@ def chat(message_ids: List[str]):
 
         content = question
         if links:
+            # todo 因为没有链接总结，因此准确率很低
             net_content = ""
             for index, l in enumerate(links, start=1):
                 net_content += (

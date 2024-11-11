@@ -6,14 +6,6 @@ def test_upload_file():
     file.fullpath_upload(file_relative_path(__file__, "../resources/test_upload.webp"), "pics/test_upload.webp")
 
 
-def test_ddgs():
-    from duckduckgo_search import DDGS
-    from pprint import pprint
-
-    with DDGS() as ddgs:
-        for r in ddgs.text("中国 新闻 热点", region='zh-cn', max_results=10):
-            pprint(r)
-
 def test_ddgs_chat():
     from duckduckgo_search import DDGS
 
@@ -60,5 +52,5 @@ def test_llm():
 def test_zhipu_web_search():
     from app.service.net_search import web_search_pro
 
-    dict_ = web_search_pro("最近7天北京的天气")
+    dict_ = web_search_pro("杨度外传")
     print(dict_)
