@@ -4,6 +4,7 @@ from base64 import b64encode
 from datetime import datetime
 from typing import List
 
+from app import CHAT_CALLBACK_URL
 from app.core import message_reply_queue
 from app.logging_ import logger
 from app.model import completion as completion_storage
@@ -197,7 +198,7 @@ def reply(message_id: str):
     message = msg_storage.list_messages(db, message_id)[0]
 
     resp = requests.post(
-        "http://127.0.0.1:8080/callback",
+        CHAT_CALLBACK_URL,
         params={
             "session_id": message.session_id,
             "msg": message.content,
