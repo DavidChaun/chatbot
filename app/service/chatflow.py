@@ -51,11 +51,6 @@ with open(
     pic_default_prompt = file.read()
 
 with open(
-    file_relative_path(__file__, "../prompts/pic_context_prompt.txt"), "r"
-) as file:
-    pic_context_prompt = file.read()
-
-with open(
     file_relative_path(__file__, "../prompts/link_default_prompt.txt"), "r"
 ) as file:
     link_default_prompt = file.read()
@@ -128,6 +123,7 @@ def chat(message_ids: List[str]):
             intent, search_contexts, links = web_search_pro(question)
             logger.info(f"【{messages[0].from_}】搜索意图：{intent}")
             # todo 保存一下相关意图和问题，方便调整
+            # 意图识别，可以直接返回微信的内置tag链接
 
             # 发一个过去让客户知道关联的链接
             link_content = '\n'.join(links[0:2])
