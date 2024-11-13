@@ -73,6 +73,7 @@ def receive_msg(
         # resize
         pixels = (512, 512)
         img = Image.open(uploaded_file.file)
+        img = img.convert("RGB")
         content_meta["resize_pixels"] = f"{pixels[0]}*{pixels[1]}"
         content_meta["real_pixels"] = f"{img.width}*{img.height}"
         bio = io.BytesIO()
