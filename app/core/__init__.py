@@ -1,4 +1,5 @@
 from typing import Dict, List, Any
+from copy import deepcopy
 from collections import defaultdict
 import time
 from threading import Thread, Lock
@@ -39,8 +40,10 @@ class MessageReceiveQueue:
     session_id_to_msgs : Dict[str, TimedList] = defaultdict(TimedList)
 
     def send(self, session_id, msg, delay=3):
-        with self.lock:
-            self.session_id_to_msgs[session_id].append(msg, delay=delay)
+        if session_id not in self.session_id_to_msgs:
+            with self.lock:
+                self.session_id_to_msgs[session_id].append(msg, delay=delay)
+        self.session_id_to_msgs[session_id].append(msg, delay=delay)
 
     def _proceed(self):
         from app.service.chatflow import chat
@@ -64,8 +67,10 @@ class MessageReplyQueue:
     session_id_to_msgs : Dict[str, List[str]] = defaultdict(list)
 
     def send(self, session_id, msg_id):
-        with self.lock:
-            self.session_id_to_msgs[session_id].append(msg_id)
+        if session_id not in self.session_id_to_msgs:
+            with self.lock:
+                self.session_id_to_msgs[session_id].append(msg_id)
+        self.session_id_to_msgs[session_id].append(msg_id)
 
     def _proceed(self):
         from app.service.chatflow import reply
