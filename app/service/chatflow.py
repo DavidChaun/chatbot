@@ -76,6 +76,7 @@ def chat(message_ids: List[str]):
     db = next(get_db())
     messages = msg_storage.list_messages(db, message_ids)
     session_id = messages[0].session_id
+    is_group = messages[0].is_group
 
     # 历史记录跳过图片，只回忆30分钟前的
     histories = msg_storage.list_previous_messages(
@@ -109,6 +110,11 @@ def chat(message_ids: List[str]):
         )
     ]
 
+    # 目前问题
+    # 重写基本无效
+    # 多轮下来有点弱智，不能简单把记录放到system，前面总结一部份记录，然后role message放6条试一试
+    # 图片识别，prompt需要调整，一张也会分几张说
+
     is_text_type = all([m.type_ == "text" for m in messages])
     if is_text_type:
         question = "\n".join([m.content for m in messages])
@@ -128,7 +134,7 @@ def chat(message_ids: List[str]):
 
             # 发一个过去让客户知道关联的链接
             link_content = '\n'.join(links[0:2])
-            _build_and_send_reply_msg(f"挑了些链接。\n{link_content}", messages[0].to, messages[0].from_, session_id)
+            _build_and_send_reply_msg(f"挑了些链接。\n{link_content}", messages[0].to, messages[0].from_, session_id, is_group)
 
             llm_messages.append(
                 LlmMessage(
@@ -177,16 +183,17 @@ def chat(message_ids: List[str]):
     db_completion = completion_storage.save_llm_result(
         [m.model_dump() for m in llm_messages], llm_result, begin_at, messages[0].from_
     )
-    _build_and_send_reply_msg(db_completion.result, messages[0].to, messages[0].from_, session_id)
+    _build_and_send_reply_msg(db_completion.result, messages[0].to, messages[0].from_, session_id, is_group)
 
 
-def _build_and_send_reply_msg(content, from_, to, session_id):
+def _build_and_send_reply_msg(content, from_, to, session_id, is_group):
     reply_msg = Message(
         type_="text",
-        content=content,
+        content=content if not is_group else f"@{to} {content}",
         from_=from_,
         to=to,
         session_id=session_id,
+        is_group=is_group,
         created_at=datetime.now(),
     )
     save_entity(reply_msg)

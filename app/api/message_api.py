@@ -98,7 +98,7 @@ def receive_msg(
         )
         save_entity(msg_extra)
 
-    message_receive_queue.send(session_id, messaged.id, delay={"pic": 15}.get(type_, 3))
+    message_receive_queue.send(session_id, messaged.id, delay={"pic": 7}.get(type_, 1))
 
 
 def _decorate_message(
@@ -116,7 +116,7 @@ def _decorate_message(
         msg_storage.clear_messages(session_id)
         reply_msg = Message(
             type_=type_,
-            content="done",
+            content="我已经忘了之前聊过的内容了",
             from_=to_username,
             to=from_username,
             session_id=session_id,
