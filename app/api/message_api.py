@@ -71,13 +71,21 @@ def receive_msg(
     # content包含链接??
     if type_ == "pic":
         # resize
-        pixels = (512, 512)
+        # 获取原始宽高
         img = Image.open(uploaded_file.file)
         img = img.convert("RGB")
-        content_meta["resize_pixels"] = f"{pixels[0]}*{pixels[1]}"
+        original_width, original_height = img.size
+        # 计算缩放比例
+        scaling_factor = min(512 / original_width, 512 / original_height)
+
+        # 确定新尺寸，保持比例
+        new_width = int(original_width * scaling_factor)
+        new_height = int(original_height * scaling_factor)
+
+        content_meta["resize_pixels"] = f"{new_width}*{new_height}"
         content_meta["real_pixels"] = f"{img.width}*{img.height}"
         bio = io.BytesIO()
-        img.resize(pixels).save(bio, format="JPEG")
+        img.resize((new_width, new_height), Image.LANCZOS).save(bio, format="JPEG")
         content_bytes = bio.getvalue()
         bio.close()
     if type_ == "link":

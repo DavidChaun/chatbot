@@ -54,3 +54,9 @@ def test_zhipu_web_search():
 
     dict_ = web_search_pro("杨度外传")
     print(dict_)
+
+def test_pillow():
+    from PIL import Image
+
+    print("Supported filters:")
+    print([f for f in dir(Image) if f.isupper()])
