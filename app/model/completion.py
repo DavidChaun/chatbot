@@ -4,6 +4,7 @@ from typing import Dict, List
 from pydantic import BaseModel
 
 from app.database import Base, get_db
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, String, DateTime, Integer, JSON
 
 
@@ -11,9 +12,9 @@ class Completion(Base):
     __tablename__ = "completion"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    request_body = Column(JSON)
+    request_body = Column(JSONB)
     result = Column(String)
-    response_body = Column(JSON)
+    response_body = Column(JSONB)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)
     begin_at = Column(DateTime, comment="request begin time")

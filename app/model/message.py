@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import BYTEA
+from sqlalchemy.dialects.postgresql import BYTEA, JSONB
 from sqlalchemy import Column, String, Text, JSON, Integer, DateTime, ForeignKey, Boolean
 
 from app.database import Base, get_db
@@ -36,7 +36,7 @@ class MessageExtra(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     message_id = Column(Integer, ForeignKey(f"{Message.__tablename__}.id", ondelete="CASCADE"), index=True, nullable=False)
-    content_meta = Column(JSON, comment="消息的元信息")
+    content_meta = Column(JSONB, comment="消息的元信息")
     content_bytes = Column(BYTEA, comment="消息内容，一般是图片、链接抓取等")
 
     message = relationship(Message, back_populates="message_extra")
